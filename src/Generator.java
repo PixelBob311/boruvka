@@ -33,6 +33,12 @@ public class Generator {
                 connectingNode.connectNodeTo(node, pathWeight);
             }
         }
+        Generator.sortGeneratedRelations(nodesList);
     }
 
+    private static void sortGeneratedRelations(List<Node> nodesList) {
+        for (Node node : nodesList) {
+            node.sortRelations();
+        }
+    }
 }
