@@ -39,6 +39,10 @@ public class ComponentContainer {
         Component result = new Component();
         result.addNodes(component1.getNodes());
         result.addNodes(component2.getNodes());
+
+        result.incrementWeight(component1.getTotalWeight());
+        result.incrementWeight(component2.getTotalWeight());
+
         this.components.set(components.indexOf(component1), result);
         this.components.remove(components.indexOf(component2));
     }

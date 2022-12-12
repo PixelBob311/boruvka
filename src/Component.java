@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Component {
     List<Node> nodes = new ArrayList<>();
@@ -12,10 +14,6 @@ public class Component {
     }
 
     public Component() {
-    }
-
-    public Node getCurrentNode() {
-        return this.nodes.get(this.nodes.size() - 1);
     }
 
     public List<Node> getNodes() {
@@ -34,14 +32,37 @@ public class Component {
         return this.nodes.contains(node);
     }
 
-    public Node findConnector() {
+    public Map.Entry<Node, Integer> findConnector() {
+        /*
+         * а если самая короткая нода не имеет связи с другими компонентами?
+         * Как быть?
+         * Надо вернуть другую, которая имеет связь с другой компонентой
+         * Нужно как-то проверить, принадлежит ли найденная нода друним компонентам или нет
+         */
+        int connectorValue = Integer.MAX_VALUE;
         Map.Entry<Node, Integer> connector = this.nodes.get(0).getNearestNode();
         for (Node node : this.nodes) {
-            Map.Entry<Node, Integer> nearest = node.getNearestNode();
-            if (!this.containsNode(nearest.getKey()) && connector.getValue() > nearest.getValue()) {
-                connector = nearest;
+            var externalNode = node.getConnections()
+                    .entrySet()
+                    .stream()
+                    .filter(n -> !this.containsNode(n.getKey())).min(Map.Entry.comparingByValue());
+            //если все связанны ноды находятся внутри компоненты - пропускаем ноду
+            if (externalNode.isEmpty()) {
+                continue;
+            }
+            if (externalNode.get().getValue() < connectorValue) {
+                connector = externalNode.get();
+                connectorValue = externalNode.get().getValue();
             }
         }
-        return connector.getKey();
+        return connector;
+    }
+
+    public int getTotalWeight(){
+        return this.totalWeight;
+    }
+
+    public void incrementWeight(int value) {
+        this.totalWeight += value;
     }
 }

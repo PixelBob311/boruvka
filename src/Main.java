@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,11 +14,17 @@ public class Main {
         ComponentContainer components = makeComponents(graph);
         while (components.size() > 1) {
             //объединяем компоненты по минимальному пути
-            for (Component cmp : components.getComponents()) {
-                Node connector = cmp.findConnector();
-                int t = 1;
+            for (int i = 0; i < components.getComponents().size(); i++) {
+                Component currentComponent = components.getComponent(i);
+                Map.Entry<Node, Integer> connector = currentComponent.findConnector();
+                Component nearestComponent = components.getComponentContains(connector.getKey());
+                if (nearestComponent != null) {
+                    currentComponent.incrementWeight(connector.getValue());
+                    components.mergeComponents(currentComponent, nearestComponent);
+                }
             }
         }
+        int w = components.getComponent(0).getTotalWeight();
         int t = 1;
     }
 
@@ -32,6 +39,7 @@ public class Main {
             Component existingComponent = components.getComponentContains(nearestNode);
             if (existingComponent != null) {
                 existingComponent.addNode(currentNode);
+                existingComponent.incrementWeight(currentNode.getNearestNode().getValue());
             } else {
                 Component anotherComponent = new Component();
                 anotherComponent.addNode(currentNode);
