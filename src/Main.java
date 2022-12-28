@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,10 +6,10 @@ public class Main {
 //        Graph graph = Generator.generateGraph(5);
         Graph graph = testGraph();
 //        graph.printGraph();
-        boruvkaSeq(graph);
+        int seqRes = boruvkaSeq(graph);
     }
 
-    public static void boruvkaSeq(Graph graph) {
+    public static int boruvkaSeq(Graph graph) {
         ComponentContainer components = makeComponents(graph);
         while (components.size() > 1) {
             //объединяем компоненты по минимальному пути
@@ -24,8 +23,11 @@ public class Main {
                 }
             }
         }
-        int w = components.getComponent(0).getTotalWeight();
-        int t = 1;
+        return components.getComponent(0).getTotalWeight();
+    }
+
+    public static void boruvkaPar(Graph graph, int threadCount) {
+
     }
 
     private static ComponentContainer makeComponents(Graph graph) {
@@ -41,9 +43,9 @@ public class Main {
                 existingComponent.addNode(currentNode);
                 existingComponent.incrementWeight(currentNode.getNearestNode().getValue());
             } else {
-                Component anotherComponent = new Component();
-                anotherComponent.addNode(currentNode);
-                components.addComponent(anotherComponent);
+                Component newComponent = new Component();
+                newComponent.addNode(currentNode);
+                components.addComponent(newComponent);
             }
         }
         return components;
